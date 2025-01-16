@@ -46,7 +46,7 @@ https://opensearch.org/docs/latest/install-and-configure/install-dashboards/inde
 
 ## Deploy Sample app to kubernetes
 
-    ## Add Prometheus Actuator
+    ## Add PyActuator
     ## Add Otel to Minkube
     ## Add Data-prepper to Minkube
 

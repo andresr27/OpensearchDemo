@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: opensearch-dashboards-ingress
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: minikube-ip
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: dev-opensearch-dashboards
+                port:
+                  number: 5601

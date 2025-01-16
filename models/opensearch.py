@@ -1,9 +1,9 @@
 from logging import exception
 
 from opensearchpy import OpenSearch
-from opensearch_dsl import Search
+#from opensearch_dsl import Search
 import os
-import uuid
+import json
 from dotenv import load_dotenv
 import datetime
 
@@ -40,7 +40,46 @@ class OpenSearchClient:
             'index': {
               'number_of_shards': 2
             }
+          },
+          'mappings': {
+
+              "properties": {
+                  "book": {
+                      "properties": {
+                          "bidPrice": {"type": "float"},
+                          "bidQty": {"type": "float"},
+                          "askPrice": {"type": "float"},
+                          "askQty": {"type": "float"}
+                      }
+                  },
+                  "info": {
+                      "properties": {
+                          "priceChange": {"type": "float"},
+                          "priceChangePercent": {"type": "float"},
+                          "weightedAvgPrice":{"type": "float"},
+                          "prevClosePrice": {"type": "float"},
+                          "lastPrice": {"type": "float"},
+                          "lastQty": {"type": "float"},
+                          "bidPrice": {"type": "float"},
+                          "bidQty": {"type": "float"},
+                          "askPrice": {"type": "float"},
+                          "askQty": {"type": "float"},
+                          "openPrice": {"type": "float"},
+                          "highPrice": {"type": "float"},
+                          "lowPrice": {"type": "float"},
+                          "volume": {"type": "float"},
+                          "quoteVolume": {"type": "float"},
+                          "openTime": {"type": "float"},
+                          "closeTime": {"type": "date"},
+                          "firstId":{"type": "date"},
+                          "lastId": {"type": "date"},
+                          "count": {"type": "integer"},
+                          "avg_price_5m": {"type": "float"}
+                      }
+                  }
+              }
           }
+
         }
         try:
             response = self.client.indices.create(index_name, index_body)
@@ -48,15 +87,13 @@ class OpenSearchClient:
         except Exception as e:
             print(e)
 
-    def index_data(self,data,index_name):
-        ts = datetime.datetime.now()
-        print(ts)
-        data["@timestamp"] = ts
+    def index_data(self,body,index_name):
+
         try:
             self.index_create(index_name)
             response = self.client.index(
                 index = index_name,
-                body = data,
+                body = body,
                 refresh = True)
 
             print(response)
@@ -67,10 +104,11 @@ class OpenSearchClient:
         ts = datetime.datetime.now()
         print(ts)
         data["@timestamp"] = ts
+        body = json.dumps(data, indent=4, sort_keys=True, default=str)
         try:
             response = self.client.bulk(
                 index = index_name,
-                body = data,
+                body = body,
                 refresh = True)
             print(response)
         except Exception as e:
